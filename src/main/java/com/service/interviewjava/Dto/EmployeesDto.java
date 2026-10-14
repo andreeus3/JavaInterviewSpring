@@ -3,7 +3,7 @@ package com.service.interviewjava.Dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class EmployeeDto {
+public class EmployeesDto {
     private Long id;
     private String name;
     private String email;
@@ -11,10 +11,10 @@ public class EmployeeDto {
     private LocalDate hireDate;
     private BigDecimal salary;
 
-    public EmployeeDto() {
+    public EmployeesDto() {
     }
 
-    public EmployeeDto(Long id, String name, String email, Integer age, LocalDate hireDate, BigDecimal salary) {
+    public EmployeesDto(Long id, String name, String email, Integer age, LocalDate hireDate, BigDecimal salary) {
         this.id = id;
         this.name = name;
         this.email = email;
