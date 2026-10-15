@@ -3,6 +3,7 @@ package com.service.interviewjava.Service;
 import com.service.interviewjava.Dao.EmployeesDao;
 import com.service.interviewjava.Dto.EmployeesDto;
 import com.service.interviewjava.Entity.Employees;
+import com.service.interviewjava.Mapper.EmployeesMapper;
 import jakarta.transaction.Transactional;
 
 import java.util.ArrayList;
@@ -12,9 +13,11 @@ import java.util.Optional;
 public class EmployeeServiceImpl implements EmployeeService{
 
     private final EmployeesDao employeesDao;
+    private final EmployeesMapper employeesMapper;
 
-    public EmployeeServiceImpl(EmployeesDao employeesDao){
+    public EmployeeServiceImpl(EmployeesDao employeesDao, EmployeesMapper employeesMapper){
         this.employeesDao = employeesDao;
+        this.employeesMapper = employeesMapper;
     }
 
     @Override
@@ -24,14 +27,7 @@ public class EmployeeServiceImpl implements EmployeeService{
         List<EmployeesDto> employeesDtoList = new ArrayList<>();
 
         for(Employees employees: employeesList){
-            EmployeesDto employeesDTO = new EmployeesDto();
-            employeesDTO.setId(employees.getId());
-            employeesDTO.setAge(employees.getAge());
-            employeesDTO.setEmail(employees.getEmail());
-            employeesDTO.setHireDate(employees.getHireDate());
-            employeesDTO.setName(employees.getName());
-            employeesDTO.setSalary(employees.getSalary());
-
+            EmployeesDto employeesDTO = employeesMapper.toDto(employees);
             employeesDtoList.add(employeesDTO);
         }
 
@@ -52,9 +48,9 @@ public class EmployeeServiceImpl implements EmployeeService{
 
         employeesDto.setId(employees.getId());
         employeesDto.setAge(employees.getAge());
-        employeesDto.setEmail(employeesDto.getEmail());
-        employeesDto.setName(employeesDto.getName());
-        employeesDto.setHireDate(employeesDto.getHireDate());
+        employeesDto.setEmail(employees.getEmail());
+        employeesDto.setName(employees.getName());
+        employeesDto.setHireDate(employees.getHireDate());
 
         return Optional.of(employeesDto);
 
@@ -62,27 +58,27 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     @Transactional
-    public Employees save(EmployeesDto employeesDto){
+    public EmployeesDto save(EmployeesDto employeesDto){
 
-        Employees employees = new Employees();
-
-        employees.setSalary(employeesDto.getSalary());
-        employees.setName(employeesDto.getName());
-        employees.setHireDate(employees.getHireDate());
-        employees.setAge(employeesDto.getAge());
-        employees.setId(employees.getId());
+        Employees employees = employeesMapper.toEntity(employeesDto);
 
         Employees savedEmployees = employeesDao.save(employees);
 
-        EmployeesDto saveEmployeesDto = new EmployeesDto();
+        return employeesMapper.toDto(savedEmployees);
+    }
 
-        saveEmployeesDto.setSalary(savedEmployees.getSalary());
-        saveEmployeesDto.setName(savedEmployees.getName());
-        saveEmployeesDto.setHireDate(savedEmployees.getHireDate());
-        saveEmployeesDto.setAge(savedEmployees.getAge());
-        saveEmployeesDto.setId(savedEmployees.getId());
+    @Override
+    @Transactional
+    public void deleteById(Long id){
+        Optional<Employees> optionalEmployees = employeesDao.findById(id);
 
-        return savedEmployees;
+        try {
+            if(optionalEmployees.isPresent()){
+                employeesDao.deleteById(id);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

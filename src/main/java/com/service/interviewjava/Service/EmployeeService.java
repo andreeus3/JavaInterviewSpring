@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface EmployeeService {
     List<EmployeesDto> findAll();
     Optional<EmployeesDto> findById(Long id);
-    Employees save(EmployeesDto EmployeesDto);
+    EmployeesDto save(EmployeesDto EmployeesDto);
     void deleteById(Long id);
 
 }
